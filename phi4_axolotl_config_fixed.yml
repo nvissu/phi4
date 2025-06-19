@@ -1,0 +1,70 @@
+base_model: microsoft/Phi-4-reasoning-plus
+model_type: AutoModelForCausalLM
+tokenizer_type: AutoTokenizer
+
+load_in_8bit: false
+load_in_4bit: true
+strict: false
+
+datasets:
+  - path: ./final_rich_dataset_fixed  # USING FIXED DATASET
+    type: chat_template
+
+dataset_prepared_path:
+val_set_size: 0.05
+output_dir: ./phi4_axolotl_outputs_fixed
+
+sequence_len: 4096  # Increased from 2048 for longer responses
+sample_packing: true
+pad_to_sequence_len: true
+
+adapter: lora
+lora_model_dir:
+lora_r: 64
+lora_alpha: 16
+lora_dropout: 0.1
+lora_target_linear: true
+lora_fan_in_fan_out:
+
+wandb_project: phi4-axolotl-training-fixed
+wandb_entity:
+wandb_watch:
+wandb_name: phi4-informius-axolotl-fixed
+wandb_log_model:
+
+gradient_accumulation_steps: 8
+micro_batch_size: 2
+num_epochs: 3
+optimizer: adamw_torch
+lr_scheduler: cosine
+learning_rate: 0.0002
+
+train_on_inputs: false
+group_by_length: false
+bf16: auto
+fp16:
+tf32: false
+
+gradient_checkpointing: true
+early_stopping_patience:
+resume_from_checkpoint:
+local_rank:
+device_map:
+
+logging_steps: 10
+xformers_attention:
+flash_attention: false
+
+warmup_steps: 100
+evals_per_epoch: 4
+eval_table_size:
+eval_max_new_tokens: 1024  # Increased from 128 for complete responses
+saves_per_epoch: 2
+debug:
+deepspeed: 
+weight_decay: 0.0
+fsdp:
+fsdp_config:
+special_tokens:
+
+chat_template: phi_3
